@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+#
+# List properties of all wmii (window manager) cients.
+
+for i in `wmiir ls /client`; do
+	echo "Client ${i}:"
+	props=`wmiir read /client/${i}/props`
+	echo "   ${props}"
+done
+
