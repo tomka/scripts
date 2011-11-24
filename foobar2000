@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+#
+# Script to start foobar2000 with wine
+#
+# A file name passed as argument can be handled. This filename
+# refers to file in a unix like directory tree. First thing
+# is to convert it to a format known to foobar/wine by prepending "z:".
+
+fooBarPath=~/opt/foobar2000/foobar2000.exe
+
+if [ $# -eq 0 ]; then
+	wine "${fooBarPath}"
+else
+	media="z:$1"
+	wine "${fooBarPath}" "${media}"
+fi
+
