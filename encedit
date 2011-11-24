@@ -1,0 +1,36 @@
+#!/usr/bin/env sh
+#
+# This script edits a GnuPG protected file by removing a potential
+# lock, starting vim for editing and finaly locks it again.
+#
+# Tom Kazimiers <tom@voodoo-arts.net> / 2011 /Beer-ware
+
+EXPECTED_ARGS=1
+
+# Test arguments
+if [ $# -ne $EXPECTED_ARGS ]; then
+  echo "Usage: `basename $0` {arg}"
+  exit 1
+fi
+
+# Test if $EDITOR is set
+ED="vim"
+if [ "$EDITOR" == "" ]; then
+	echo "Info: you do not seem to have \$EDITOR set, please do that. Will use vim."
+else
+	ED="$EDITOR"
+fi
+
+FILENAME=$1
+
+gpg -o ~/.secret/.tmp -d $FILENAME
+RETVAL=$?
+if [ $RETVAL -ne 0 ]; then
+	echo "Error: a problem occured with gpg. Exiting."
+	exit 1
+fi
+
+$ED ~/.secret/.tmp
+gpg -o $FILENAME -e ~/.secret/.tmp
+wipe ~/.secret/.tmp
+
