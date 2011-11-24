@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+#
+# Searches for duplicates and removes the first one of each pair found
+
+EXPECTED_ARGS=1
+
+# Test arguments
+if [ $# -ne $EXPECTED_ARGS ]; then
+  echo "Usage: `basename $0` <folder>"
+  exit 1
+fi
+
+FILENAME=$1
+
+fdupes -r -f $FILENAME | xargs rm -f
+
