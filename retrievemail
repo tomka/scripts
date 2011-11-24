@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+#
+# Run this script through cron to fetch email periodically
+
+# IMAP Mails, configured with offlineimap
+ps aux | grep "\/usr\/bin\/offlineimap"
+if [ $? -eq "0" ]; then
+        logger -i -t offlineimap "Another instance of offlineimap running. Exiting."
+else
+        logger -i -t offlineimap "Starting offlineimap..."
+        offlineimap -u Quiet -o
+        logger -i -t offlineimap "Done offlineimap..."
+fi
+
+# POP3 Mails
+# replace mail1, mail2 and mail3 with getmait rc files
+# as appropriate
+#ps aux | grep "\/usr\/bin\/getmail"
+#if [ $? -eq "0" ]; then
+#        logger -i -t getmail "Another instance of getmail running. Exiting."
+#else
+#        logger -i -t getmail "Starting getmai..."
+#        nice -n 10 /usr/bin/getmail -n --rcfile=mail1 --rcfile=mail2 --rcfile=mail3
+#        logger -i -t getmail "Done getmail..."
+#fi
+
+exit 0
+
