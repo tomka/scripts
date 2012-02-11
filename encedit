@@ -22,15 +22,22 @@ else
 fi
 
 FILENAME=$1
+TMPDIR="~/.secret"
+if [ ! -e $TMPDIR ]; then
+    mkdir $TMPDIR
+elif [ ! -d $TMPDIR ]; then
+    echo "$TMPDIR already exists but is not a directory" 1>&2
+    exit 1
+fi
 
-gpg -o ~/.secret/.tmp -d $FILENAME
+gpg -o $TMPDIR/.tmp -d $FILENAME
 RETVAL=$?
 if [ $RETVAL -ne 0 ]; then
 	echo "Error: a problem occured with gpg. Exiting."
 	exit 1
 fi
 
-$ED ~/.secret/.tmp
-gpg -o $FILENAME -e ~/.secret/.tmp
-wipe ~/.secret/.tmp
+$ED $TMPDIR/.tmp
+gpg -o $FILENAME -e $TMPDIR/.tmp
+wipe $TMPDIR/.tmp
 
