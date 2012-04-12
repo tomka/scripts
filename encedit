@@ -39,5 +39,14 @@ fi
 
 $ED $TMPDIR/.tmp
 gpg -o $FILENAME -e $TMPDIR/.tmp
+
+# Wipe the temporary file
 wipe $TMPDIR/.tmp
+RETVAL=$?
+if [ $RETVAL -ne 0 ]; then
+	echo "Error: a problem occured with wiping the temporary file $TMPDIR/.tmp -- please wipe manually."
+	exit 1
+else
+	echo "Wiped all temporary data successfully."
+fi
 
