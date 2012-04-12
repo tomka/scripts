@@ -22,7 +22,7 @@ else
 fi
 
 FILENAME=$1
-TMPDIR="~/.secret"
+TMPDIR=~/.secret
 if [ ! -e $TMPDIR ]; then
     mkdir $TMPDIR
 elif [ ! -d $TMPDIR ]; then
