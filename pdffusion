@@ -39,7 +39,7 @@ FILE1=$1
 FILE2=$2
 OUTFILE=$3
 PAPERSIZE=$4
-
+PREAMBLE="\pdfminorversion=4"
 # Correct number of arguments?
 if [ $# -ne 4 ]
 then
@@ -73,7 +73,7 @@ pdfseparate $2 $TMPDIR/2-$2-%d.pdf
 # Create a fused pages for all pages and prepare the
 # joining command.
 p=1;
-JOINCMD="pdfjoin --quiet -o $OUTFILE "
+JOINCMD="pdfjoin --quiet --preamble '$PREAMBLE' -o $OUTFILE "
 while [ $p -le $NPAGES ]; do
 	echo "Fusing page $p"
 	FUSEDFILE="fused-$p.pdf"
