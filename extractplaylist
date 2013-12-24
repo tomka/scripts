@@ -1,0 +1,24 @@
+#!/usr/bin/python2
+
+import os.path, shutil, sys
+
+FILE = '/home/my-home/my-playlist.m3u'
+DIR = '/some-target-directory'
+
+# Make sure we have two arguments
+if len(sys.argv) != 3:
+    print("Usage: %s <playlist file> <target dir>" % sys.argv[0])
+    sys.exit(1)
+
+playlist = sys.argv[1]
+targetdir = sys.argv[2]
+
+for i, s in enumerate(open(playlist)):
+    s = s.rstrip()
+    try:
+        targetpath = os.path.join(targetdir,
+            '%03d-%s' % (i+1, os.path.basename(s)))
+        print("Copying:\n\tFrom: %s\n\tTo: %s" % (s, targetpath))
+        shutil.copy(s, targetpath)
+    except IOError, e:
+        sys.stderr.write('warning: %s\n' % e)
