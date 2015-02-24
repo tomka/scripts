@@ -1,24 +1,55 @@
 #!/usr/bin/python2
 
 import os.path, shutil, sys
+import mutagen
 
 FILE = '/home/my-home/my-playlist.m3u'
 DIR = '/some-target-directory'
 
-# Make sure we have two arguments
-if len(sys.argv) != 3:
-    print("Usage: %s <playlist file> <target dir>" % sys.argv[0])
+# Make sure we have two arguments and an option
+if len(sys.argv) == 3:
+    dryrun = False
+    playlist = sys.argv[1]
+    targetdir = sys.argv[2]
+elif len(sys.argv) == 4:
+    dryrun = sys.argv[1] == '--dry'
+    playlist = sys.argv[2]
+    targetdir = sys.argv[3]
+else:
+    print("Usage: %s [--dry] <playlist file> <target dir>" % sys.argv[0])
     sys.exit(1)
 
-playlist = sys.argv[1]
-targetdir = sys.argv[2]
+if dryrun:
+    def copyfile(a,b):
+        print("\tDry run:\n\tFrom: %s\n\tTo: %s" % (s, targetpath))
+else:
+    def copyfile(a,b):
+        print("\tCopying:\n\tFrom: %s\n\tTo: %s" % (s, targetpath))
+        shutil.copy(a, b)
 
 for i, s in enumerate(open(playlist)):
     s = s.rstrip()
     try:
-        targetpath = os.path.join(targetdir,
-            '%03d-%s' % (i+1, os.path.basename(s)))
-        print("Copying:\n\tFrom: %s\n\tTo: %s" % (s, targetpath))
-        shutil.copy(s, targetpath)
+        audio = mutagen.File(s)
+        artist = audio.get('artist') or audio.get('TPE1')
+        title = audio.get('title') or audio.get('TIT2')
+
+        if type(artist) == list and len(artist) > 0:
+            artist = artist[0]
+
+        if type(title) == list and len(title) > 0:
+            title = title[0]
+
+        print("File: %s" % s)
+        print("\tArtist: %s" % artist)
+        print("\tTitle: %s" % title)
+
+        if artist and title:
+            songlabel = "%s - %s%s" % (artist, title, os.path.splitext(s)[1])
+        else:
+            songlabel = os.path.basename(s)
+
+        targetpath = os.path.join(targetdir, '%02d - %s' % (i+1, songlabel))
+        copyfile(s, targetpath)
     except IOError, e:
         sys.stderr.write('warning: %s\n' % e)
