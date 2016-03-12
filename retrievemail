@@ -24,5 +24,11 @@ fi
 #        logger -i -t getmail "Done getmail..."
 #fi
 
-exit 0
+# Move INDEX and extra folders up in mutt mailbox configuration
+cat ~/.mutt/mailboxes | sed -e "s/ \"+INBOX\"//" -e "s/ \"+Drafts\")//" -e "s/\(^mailboxes\)/\1 +INBOX +Drafts/" > ~/.mutt/mailboxes.tmp
+mv ~/.mutt/mailboxes.tmp ~/.mutt/mailboxes
 
+# Index new mail
+notmuch new
+
+exit 0
