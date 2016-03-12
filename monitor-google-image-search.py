@@ -36,6 +36,9 @@ def get_images(search_term, n_images=50):
         os.makedirs(target_dir)
 
     print("{}: Found {} images".format(timestamp, len(image_results)))
+    # Get a format string padding parameter based on the number of digits in the
+    # number of found images, e.g. 20 images means a padding of '02'.
+    padding = '0' + str(len((str(len(image_results) - 1))))
     
     # Get and write image files
     for n, i in enumerate(image_results):
@@ -55,7 +58,9 @@ def get_images(search_term, n_images=50):
             data.append(chunk)
         hex_sig = sig.hexdigest()
 
-        filename = os.path.join(target_dir, "{}_{}.jpeg".format(n, hex_sig))
+        # Zero-pad n for better file listings
+        pn = format(n, padding)
+        filename = os.path.join(target_dir, "{}_{}.jpeg".format(pn, hex_sig))
         f = open(filename, "wb")
         for chunk in data:
             f.write(chunk)
