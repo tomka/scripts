@@ -1,8 +1,11 @@
 #!/usr/bin/python2
+#-*- coding: utf-8 -*-
 
 import os.path, shutil, sys
 import mutagen
 import subprocess
+
+print("Default encoding: " + sys.stdout.encoding)
 
 FILE = '/home/my-home/my-playlist.m3u'
 DIR = '/some-target-directory'
@@ -29,20 +32,26 @@ if dryrun:
         print("\tDry run:\n\tFrom: %s\n\tTo: %s" % (s, targetpath))
 else:
     def copyfile(a,b):
-        if flacenc and a.lower().endswith('.flac'):
-            infile = os.path.abspath(a)
-            b = b.lower().rstrip('.flac') + '.ogg'
-            outfile = os.path.abspath(b)
-            print("\tConverting:\n\tFrom: %s\n\tTo: %s" % (infile, outfile))
-            call = 'ffmpeg -i "%s" "%s"' % (infile, outfile)
-            output, error = subprocess.Popen(call, stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE, shell=True).communicate()
-            if error:
-                print("\tError: %s" % error)
-            print output
-        else:
-            print("\tCopying:\n\tFrom: %s\n\tTo: %s" % (a, b))
-            shutil.copy(a, b)
+        try:
+            if flacenc and a.lower().endswith('.flac'):
+                infile = os.path.abspath(a)
+                b = b.lower().rstrip('.flac') + '.ogg'
+                outfile = os.path.abspath(b)
+                try:
+                    print(u"\tConverting:\n\tFrom: %s\n\tTo: %s" % (infile, outfile))
+                except Exception, e:
+                    print "Error: ", e
+                call = u'ffmpeg -i "%s" "%s"' % (infile, outfile)
+                output, error = subprocess.Popen(call, stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE, shell=True).communicate()
+                if error:
+                    print("\tError: %s" % error)
+                print output
+            else:
+                print("\tCopying:\n\tFrom: %s\n\tTo: %s" % (a, b))
+                shutil.copy(a.encode('utf-8'), b.encode('utf-8'))
+        except Exception, e:
+            print "Error: " + str(e)
 
 for i, s in enumerate(open(playlist)):
     s = s.rstrip()

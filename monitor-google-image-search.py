@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os, sys, requests, datetime, codecs, shutil, hashlib, time
+import os, sys, requests, datetime, hashlib, time
 from lxml import html
 
 def monitor(search_term, delay, n_images=50):
@@ -48,14 +48,17 @@ def get_images(search_term, n_images=50):
         img.raw.decode_content = True
 
         # Get data MD5
+        data = []
         sig = hashlib.md5()
-        for chunk in img.iter_content(128):
+        for chunk in img:
             sig.update(chunk)
+            data.append(chunk)
         hex_sig = sig.hexdigest()
 
         filename = os.path.join(target_dir, "{}_{}.jpeg".format(n, hex_sig))
         f = open(filename, "wb")
-        shutil.copyfileobj(img.raw, f)
+        for chunk in data:
+            f.write(chunk)
         f.close()
 
 def print_usage():
