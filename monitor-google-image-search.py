@@ -43,8 +43,12 @@ def get_images(search_term, n_images=50):
     # Get and write image files
     for n, i in enumerate(image_results):
         src = i.attrib['src']
-        img = requests.get(src, headers, stream=True)
-        if img.status_code != 200:
+        try:
+            img = requests.get(src, headers, stream=True)
+        except:
+            img = None
+
+        if not img or img.status_code != 200:
             print("Couldn't load image: " + src)
             continue
 
